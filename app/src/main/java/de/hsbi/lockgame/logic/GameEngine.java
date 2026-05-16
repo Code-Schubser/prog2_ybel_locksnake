@@ -2,7 +2,10 @@ package de.hsbi.lockgame.logic;
 
 import de.hsbi.lockgame.model.Direction;
 import de.hsbi.lockgame.model.Level;
+import de.hsbi.lockgame.model.Snake;
 import de.hsbi.lockgame.ui.GamePanel;
+import java.util.List;
+import java.util.function.Consumer;
 
 // TODO: Die GameEngine verwaltet den GameState.
 
@@ -19,33 +22,54 @@ import de.hsbi.lockgame.ui.GamePanel;
 // TODO: Die GameEngine ist ein Observer für Direction: GameEngine.update(Direction)
 // TODO: Die GameEngine ist ein Observable für GameState: GamePanel.update(GameState)
 public final class GameEngine {
+    private Level level;
+    private GamePanel panel;
+    private GameState state;
 
   public GameEngine(Level level) {
     // TODO: lege eine neue GameEngine mit den übergebenen Informationen an
-    throw new UnsupportedOperationException("method not implemented yet");
+      this.level = level;
+      this.state = new GameState(level, new Snake(List.of(level.snakeStart())), level.pins(), GameState.Status.RUNNING, Direction.NONE);
+    //throw new UnsupportedOperationException("method not implemented yet");
   }
 
   public GameState state() {
     // TODO: gebe den aktuellen Spielzustand zurück
-    throw new UnsupportedOperationException("method not implemented yet");
+      return this.state;
+    //throw new UnsupportedOperationException("method not implemented yet");
   }
 
   public void setGamePanel(GamePanel panel) {
     // TODO: Setter
-    throw new UnsupportedOperationException("method not implemented yet");
+      this.panel = panel;
+    //throw new UnsupportedOperationException("method not implemented yet");
   }
 
   public void update(Direction d) {
     // TODO: aktualisiere den Blickwinkel der Schlange (GameState)
+      this.state = new GameState(
+          state.level(),
+          state.snake(),
+          state.pins(),
+          state.status(),
+          d
+      );
     // TODO: benachrichtige alle Observer und gibt den neuen Spielzustand mit (Neuzeichnen der
     // Spielfläche)
-    throw new UnsupportedOperationException("method not implemented yet");
+      if (this.panel != null) {
+          this.panel.update(this.state);
+      }
+    //throw new UnsupportedOperationException("method not implemented yet");
   }
 
   public void tick() {
     // TODO: lass das Spiel (den GameState) einen Schritt ("tick") machen
+      this.state = this.state.tick();
     // TODO: benachrichtige alle Observer und gibt den neuen Spielzustand mit (Neuzeichnen der
+      if (this.panel != null) {
+          this.panel.update(this.state);
+      }
     // Spielfläche)
-    throw new UnsupportedOperationException("method not implemented yet");
+    //throw new UnsupportedOperationException("method not implemented yet");
   }
 }
