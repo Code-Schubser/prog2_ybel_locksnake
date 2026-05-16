@@ -9,11 +9,15 @@ import de.hsbi.lockgame.ui.render.GameRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import de.hsbi.lockgame.logic.DirectionObserver;
 
 public class GamePanel extends JPanel {
   private GameState state;
   private final GameRenderer renderer;
-  private GameEngine gameEngine;
+  //private GameEngine gameEngine;
+  private final List<DirectionObserver> obsevers = new ArrayList<>();
 
   public GamePanel(GameState initialState, GameRenderer renderer) {
     this.state = initialState;
@@ -34,9 +38,18 @@ public class GamePanel extends JPanel {
     repaint();
   }
 
+  /*
   public void setGameEngine(GameEngine engine) {
     this.gameEngine = engine;
   }
+  */
+  public void addDirectionObserver(DirectionObserver observer){
+      this.obsevers.add(observer);
+
+  }
+
+
+
 
   private void setupKeyBindings(Direction direction, Iterable<Integer> keyCodes) {
     // Swing separates two layers: multiple keystrokes can be mapped to a single Action
@@ -53,7 +66,7 @@ public class GamePanel extends JPanel {
         new AbstractAction() {
           @Override
           public void actionPerformed(ActionEvent e) {
-            gameEngine.update(direction);
+            obsevers.forEach(observer -> observer.onDirectionChanged(direction));
           }
         };
 

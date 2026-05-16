@@ -4,6 +4,8 @@ import de.hsbi.lockgame.model.Direction;
 import de.hsbi.lockgame.model.Level;
 import de.hsbi.lockgame.model.Snake;
 import de.hsbi.lockgame.ui.GamePanel;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -23,7 +25,8 @@ import java.util.function.Consumer;
 // TODO: Die GameEngine ist ein Observable für GameState: GamePanel.update(GameState)
 public final class GameEngine {
     private Level level;
-    private GamePanel panel;
+    //private GamePanel panel;
+    private final List<GameStateObserver> observers = new ArrayList<>();
     private GameState state;
 
   public GameEngine(Level level) {
@@ -38,6 +41,7 @@ public final class GameEngine {
       return this.state;
     //throw new UnsupportedOperationException("method not implemented yet");
   }
+/*
 
   public void setGamePanel(GamePanel panel) {
     // TODO: Setter
@@ -45,7 +49,13 @@ public final class GameEngine {
     //throw new UnsupportedOperationException("method not implemented yet");
   }
 
-  public void update(Direction d) {
+ */
+    public void addObserver(GameStateObserver observer) {
+        observers.add(observer);
+    }
+
+
+    public void update(Direction d) {
     // TODO: aktualisiere den Blickwinkel der Schlange (GameState)
       this.state = new GameState(
           state.level(),
@@ -56,19 +66,17 @@ public final class GameEngine {
       );
     // TODO: benachrichtige alle Observer und gibt den neuen Spielzustand mit (Neuzeichnen der
     // Spielfläche)
-      if (this.panel != null) {
-          this.panel.update(this.state);
-      }
+      observers.forEach(observer -> observer.onStateChanged(this.state()));
     //throw new UnsupportedOperationException("method not implemented yet");
   }
+
 
   public void tick() {
     // TODO: lass das Spiel (den GameState) einen Schritt ("tick") machen
       this.state = this.state.tick();
     // TODO: benachrichtige alle Observer und gibt den neuen Spielzustand mit (Neuzeichnen der
-      if (this.panel != null) {
-          this.panel.update(this.state);
-      }
+
+      observers.forEach(observer -> observer.onStateChanged(this.state()));
     // Spielfläche)
     //throw new UnsupportedOperationException("method not implemented yet");
   }
